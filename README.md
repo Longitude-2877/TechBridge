@@ -4,7 +4,7 @@ Elder-friendly Android launcher app — big buttons, simple screens, fullscreen 
 
 ## APKs
 
-All builds are inside the `all apks` folder:
+All builds are inside the `pre release builds (apks)` folder:
 
 | File | Version | What it includes |
 |------|---------|------------------|
