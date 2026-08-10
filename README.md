@@ -12,6 +12,7 @@ All builds are inside the `pre release builds (apks)` folder:
 | `app-release.apk` | Test 1 | Release build, base launcher |
 | `app-release-2.apk` | Test 2 | Permanent top/bottom bars, custom caller, Calendar, Calculator, Gallery, camera video |
 | `app-release-3.apk` | Test 3 | Add & save contacts, custom keyboard, revamped calculator, gallery delete/sort, battery bar, Settings app |
+| `app-release-4.apk` | Test 4 | Small-screen fixes, no system bars, festivals calendar, first-launch permissions screen, add apps & quick dials to home, charging indicator |
 
 ## How to install
 
