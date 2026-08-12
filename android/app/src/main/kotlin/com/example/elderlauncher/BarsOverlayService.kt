@@ -77,7 +77,7 @@ class BarsOverlayService : Service() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
             setPadding(dp(20), dp(8), dp(20), dp(8))
-            background = solid(0xFFFFFFFF)
+            background = solid(0xFFFFFFFF.toInt())
             elevation = dp(6).toFloat()
             addView(timeText, LinearLayout.LayoutParams(0, dp(44), 1f))
             addView(batteryText, LinearLayout.LayoutParams(dp(80), dp(44)))
@@ -93,7 +93,7 @@ class BarsOverlayService : Service() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
             setPadding(dp(8), dp(10), dp(8), dp(10))
-            background = solid(0xFFFFFFFF)
+            background = solid(0xFFFFFFFF.toInt())
             elevation = dp(6).toFloat()
             addView(sos, LinearLayout.LayoutParams(0, dp(58), 1f))
             addView(home, LinearLayout.LayoutParams(0, dp(58), 1f))
