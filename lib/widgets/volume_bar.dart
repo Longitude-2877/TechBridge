@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'theme/contra_theme.dart';
 
 /// Custom volume bar: when the hardware volume buttons are pressed, this
 /// bar slides in with a big slider, hiding just after the press stops.
+/// The native side (MainActivity) consumes the hardware buttons and pushes
+/// the new level here, so the system volume UI never shows.
 class VolumeBar extends StatefulWidget {
   const VolumeBar({super.key});
 
@@ -13,7 +16,8 @@ class VolumeBar extends StatefulWidget {
 }
 
 class _VolumeBarState extends State<VolumeBar> {
-  final VolumeController _vc = VolumeController();
+  static const _channel = MethodChannel('elders/volume');
+
   double _volume = 0.4;
   bool _visible = false;
   Timer? _hideTimer;
@@ -21,16 +25,25 @@ class _VolumeBarState extends State<VolumeBar> {
   @override
   void initState() {
     super.initState();
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'volumeChanged' && mounted) {
+        final v = (call.arguments as num?)?.toDouble() ?? _volume;
+        setState(() {
+          _volume = v.clamp(0.0, 1.0);
+          _visible = true;
+        });
+        _armHide();
+      }
+    });
     _init();
   }
 
   Future<void> _init() async {
     try {
-      await _vc.load();
-      // Android: try to suppress the system volume UI so ours shows instead.
-      _vc.showSystemUI = false;
+      _volume = (await FlutterVolumeController.getVolume()).clamp(0.0, 1.0);
+      await FlutterVolumeController.updateShowSystemUI(false);
     } catch (_) {}
-    _vc.volumeStream.listen((v) {
+    FlutterVolumeController.addListener((v) {
       if (!mounted) return;
       setState(() {
         _volume = v.clamp(0.0, 1.0);
@@ -52,13 +65,15 @@ class _VolumeBarState extends State<VolumeBar> {
       _volume = v;
       _visible = true;
     });
-    _vc.setVolume(v, showSystemUI: false);
+    FlutterVolumeController.setVolume(v);
     _armHide();
   }
 
   @override
   void dispose() {
     _hideTimer?.cancel();
+    FlutterVolumeController.removeListener();
+    _channel.setMethodCallHandler(null);
     super.dispose();
   }
 

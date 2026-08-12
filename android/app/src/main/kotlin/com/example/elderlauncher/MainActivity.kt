@@ -3,10 +3,12 @@ package com.example.elderlauncher
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Settings
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsets
 import androidx.core.view.WindowInsetsControllerCompat
@@ -16,12 +18,41 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
 
+    private var volumeChannel: MethodChannel? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         hideSystemBars()
         window.decorView.setOnSystemUiVisibilityChangeListener {
             hideSystemBars()
         }
+    }
+
+    // Custom volume bar: consume the hardware volume keys so the system
+    // slider never shows, and tell Flutter the new level.
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+            keyCode == KeyEvent.KEYCODE_VOLUME_DOWN
+        ) {
+            val am = getSystemService(AUDIO_SERVICE) as AudioManager
+            val max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            val cur = am.getStreamVolume(AudioManager.STREAM_MUSIC)
+            val next = if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                (cur + 1).coerceAtMost(max)
+            } else {
+                (cur - 1).coerceAtLeast(0)
+            }
+            am.setStreamVolume(AudioManager.STREAM_MUSIC, next, 0)
+            try {
+                volumeChannel?.invokeMethod(
+                    "volumeChanged",
+                    if (max > 0) next.toDouble() / max else 0.0
+                )
+            } catch (_: Exception) {
+            }
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onResume() {
@@ -84,6 +115,9 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        volumeChannel = MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger, "elders/volume"
+        )
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "elders/phone")
             .setMethodCallHandler { call, result ->
                 when (call.method) {
