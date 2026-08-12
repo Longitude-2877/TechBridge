@@ -736,6 +736,7 @@ class _LauncherScreenState extends State<LauncherScreen> {
                     );
                   },
                 ),
+                ),
               ],
             ),
           ),

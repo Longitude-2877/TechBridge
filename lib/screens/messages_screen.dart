@@ -178,7 +178,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       name = contact.name;
     } else {
       final numController = TextEditingController();
-      final entered = await showModalBottomSheet<bool>(
+      final entered = await showModalBottomSheet<String>(
         context: context,
         isScrollControlled: true,
         backgroundColor: ContraTheme.bg,

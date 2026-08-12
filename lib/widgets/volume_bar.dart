@@ -40,7 +40,8 @@ class _VolumeBarState extends State<VolumeBar> {
 
   Future<void> _init() async {
     try {
-      _volume = (await FlutterVolumeController.getVolume()).clamp(0.0, 1.0);
+      final v = await FlutterVolumeController.getVolume();
+      _volume = (v ?? 0.4).clamp(0.0, 1.0).toDouble();
       await FlutterVolumeController.updateShowSystemUI(false);
     } catch (_) {}
     FlutterVolumeController.addListener((v) {
