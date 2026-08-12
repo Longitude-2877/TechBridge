@@ -636,11 +636,11 @@ class _LauncherScreenState extends State<LauncherScreen> {
                       final rowH = fitted.clamp(52.0, 84.0).toDouble();
                       return ListView.separated(
                         controller: _listScroll,
-                        itemExtent: rowH,
                         itemCount: count,
                         separatorBuilder: (_, __) =>
                             const SizedBox(height: 8),
                         itemBuilder: (context, i) {
+                      final Widget child;
                       if (i < defaults.length) {
                         final app = defaults[i];
                         final row = _AppRow(
@@ -651,7 +651,7 @@ class _LauncherScreenState extends State<LauncherScreen> {
                           onTap: app.onTap,
                         );
                         if (app.name == 'Messages' && _unread > 0) {
-                          return Stack(
+                          child = Stack(
                             children: [
                               row,
                               Positioned(
@@ -688,46 +688,50 @@ class _LauncherScreenState extends State<LauncherScreen> {
                               ),
                             ],
                           );
+                        } else {
+                          child = row;
                         }
-                        return row;
+                      } else {
+                        final addedIndex = i - defaults.length;
+                        if (addedIndex < _apps.length) {
+                          final app = _apps[addedIndex];
+                          final icon = _appIcons[app.package];
+                          child = _AppRow(
+                            color: ContraTheme.blue,
+                            leading: icon != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(14),
+                                    child: Image.memory(
+                                      icon,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : _LetterTile(name: app.name, color: Colors.white),
+                            name: app.name,
+                            subtitle: 'App installed on your phone',
+                            onTap: () => _launchAddedApp(app),
+                          );
+                        } else {
+                          final quickIndex = addedIndex - _apps.length;
+                          final quick = _quick[quickIndex];
+                          child = _AppRow(
+                            color: ContraTheme.teal,
+                            leading: quick.photoPath != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(14),
+                                    child: Image.file(
+                                      File(quick.photoPath!),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : _LetterTile(name: quick.name, color: Colors.white),
+                            name: quick.name,
+                            subtitle: 'Call ${quick.name} with one tap',
+                            onTap: () => _callQuick(quick),
+                          );
+                        }
                       }
-                      final addedIndex = i - defaults.length;
-                      if (addedIndex < _apps.length) {
-                        final app = _apps[addedIndex];
-                        final icon = _appIcons[app.package];
-                        return _AppRow(
-                          color: ContraTheme.blue,
-                          leading: icon != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(14),
-                                  child: Image.memory(
-                                    icon,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : _LetterTile(name: app.name, color: Colors.white),
-                          name: app.name,
-                          subtitle: 'App installed on your phone',
-                          onTap: () => _launchAddedApp(app),
-                        );
-                      }
-                      final quickIndex = addedIndex - _apps.length;
-                      final quick = _quick[quickIndex];
-                      return _AppRow(
-                        color: ContraTheme.teal,
-                        leading: quick.photoPath != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(14),
-                                child: Image.file(
-                                  File(quick.photoPath!),
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : _LetterTile(name: quick.name, color: Colors.white),
-                        name: quick.name,
-                        subtitle: 'Call ${quick.name} with one tap',
-                        onTap: () => _callQuick(quick),
-                        );
+                      return SizedBox(height: rowH, child: child);
                       },
                     );
                   },

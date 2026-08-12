@@ -316,7 +316,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                 const SizedBox(width: 12),
                 const Expanded(
                   child: Text(
-                    'Don't show this screen again',
+                    "Don't show this screen again",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 16,

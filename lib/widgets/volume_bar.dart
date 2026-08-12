@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
-import 'theme/contra_theme.dart';
+import '../theme/contra_theme.dart';
 
 /// Custom volume bar: when the hardware volume buttons are pressed, this
 /// bar slides in with a big slider, hiding just after the press stops.
