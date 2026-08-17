@@ -14,6 +14,7 @@ All builds are inside the `pre release builds (apks)` folder:
 | `app-release-3.apk` | Test 3 | Add & save contacts, custom keyboard, revamped calculator, gallery delete/sort, battery bar, Settings app |
 | `app-release-4.apk` | Test 4 | Small-screen fixes, no system bars, festivals calendar, first-launch permissions screen, add apps & quick dials to home, charging indicator |
 | `app-release-5.apk` | Test 5 | Messages app (horizontal keyboard, read/unread badges), camera flip, volume bar, pills & alarms, windowed overlay |
+| `app-release-6.apk` | Test 6 | Home screen marked "6", long-press an app to remove it from home; includes Test 5 features (Messages, camera flip, volume bar, pills & alarms, windowed overlay) |
 
 ## How to install
 
